@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonsuza Dek...</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: #000; color: white; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
+        /* --- 1. ЦZEL MЬHЬR EKRANI --- */
+        #seal-screen {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; background: radial-gradient(circle, #1a0a1a 0%, #000 100%);
+            transition: 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .magic-seal {
+            width: 180px; height: 180px; border: 4px double #ff3860; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 50px rgba(255, 56, 96, 0.4);
+            cursor: pointer; position: relative; animation: glow 2s infinite alternate;
+        }
+
+        .magic-seal i { font-size: 5rem; color: #ff3860; text-shadow: 0 0 20px #ff3860; }
+
+        .magic-seal::before {
+            content: ''; position: absolute; width: 210px; height: 210px;
+            border: 2px dashed #ffd700; border-radius: 50%; animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes glow { from { transform: scale(1); box-shadow: 0 0 30px #ff3860; } to { transform: scale(1.05); box-shadow: 0 0 60px #ff3860; } }
+
+        /* --- 2. HIKAYE MODU --- */
+        #story-screen {
+            display: none; height: 100vh; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; background: #050505;
+        }
+
+        .card-stack { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }
+
+        .secret-card {
+            width: 200px; height: 120px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ffd700; border-radius: 15px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.5s; font-weight: bold; overflow: hidden; padding: 10px;
+        }
+
+        .secret-card.revealed { background: #ff3860; border-color: white; transform: rotateY(360deg); }
+
+        /* Sarsinti Efekti */
+        .shake { animation: screenShake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes screenShake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        #final-header {
+            font-family: 'Dancing Script', cursive; font-size: 4rem;
+            color: #ffd700; display: none; animation: zoomIn 2s forwards;
+        }
+
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div id="seal-screen">
+        <h2 style="font-family: 'Orbitron', sans-serif; letter-spacing: 5px; color: #ffd700; margin-bottom: 50px;">GIRIS ICIN DOKUN</h2>
+        <div class="magic-seal" onclick="unlockHeart()">
+            <i class="fas fa-fingerprint"></i>
+        </div>
+        <p style="margin-top: 40px; font-style: italic; opacity: 0.6;">Bu muhur sadece sana ozel hazirlandi...</p>
+    </div>
+
+    <div id="story-screen">
+        <h1 id="main-title" style="color: #ff3860;">Neden Sen?</h1>
+        <div class="card-stack">
+            <div class="secret-card" onclick="openCard(this, 'Seninleyken kendim olabiliyorum.')">Birinci sebep</div>
+            <div class="secret-card" onclick="openCard(this, 'Gozlerin dunyadaki en guzel manzara.')">Ikinci sebep</div>
+            <div class="secret-card" onclick="openCard(this, 'Gelecegim seninle cok daha parlak.')">Ucuncu sebep</div>
+        </div>
+        <div id="final-header">Iyi Ki Dogdun Sevgilim Arzuw! </div>
+    </div>
+
+    <script>
+        let revealedCards = 0;
+
+        function unlockHeart() {
+            // Sarsinti ve geзis
+            document.body.classList.add('shake');
+            const seal = document.getElementById('seal-screen');
+            seal.style.opacity = '0';
+            seal.style.transform = 'scale(2)';
+            
+            setTimeout(() => {
+                seal.style.display = 'none';
+                document.getElementById('story-screen').style.display = 'flex';
+                document.body.classList.remove('shake');
+            }, 1000);
+        }
+
+        function openCard(el, message) {
+            if(!el.classList.contains('revealed')) {
+                el.innerHTML = message;
+                el.classList.add('revealed');
+                revealedCards++;
+                
+                if(revealedCards === 3) {
+                    setTimeout(showFinal, 1000);
+                }
+            }
+        }
+
+        function showFinal() {
+            document.getElementById('main-title').style.display = 'none';
+            document.querySelector('.card-stack').style.display = 'none';
+            const final = document.getElementById('final-header');
+            final.style.display = 'block';
+            
+            // Havai fisek benzeri kьзьk kalpler
+            setInterval(createHeart, 150);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.bottom = '-20px';
+            heart.style.color = Math.random() > 0.5 ? '#ff3860' : '#ffd700';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.transition = '4s cubic-bezier(0.4, 0, 0.2, 1)';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.style.bottom = '110vh';
+                heart.style.transform = `translateX(${(Math.random()-0.5)*200}px) rotate(${Math.random()*360}deg)`;
+                heart.style.opacity = '0';
+            }, 100);
+            
+            setTimeout(() => heart.remove(), 4000);
+        }
+    </script>
+</body>
+</html>
